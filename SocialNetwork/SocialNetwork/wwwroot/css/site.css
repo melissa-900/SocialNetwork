@@ -18,7 +18,8 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    overflow-x: hidden; /* hide horizontal scroll */
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
@@ -31,6 +32,8 @@ body {
 }
 
 /*  */
+
+@import "tailwindcss";
 
 .logo {
     color: #000;
