@@ -19,7 +19,7 @@ html {
 
 body {
     margin-bottom: 60px;
-    overflow-x: hidden; /* hide horizontal scroll */
+    /*overflow-x: hidden;    hide horizontal scroll */
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
@@ -31,9 +31,7 @@ body {
   text-align: start;
 }
 
-/*  */
-
-@import "tailwindcss";
+/* @import "tailwindcss"; */
 
 .logo {
     color: #000;
@@ -41,3 +39,85 @@ body {
     font-weight: bold;
     font-style: normal;
 }
+
+.userpic {
+    border-radius: 25%
+}
+
+@media (max-width: 767px) {
+    .userpic {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+.notification-icon img, svg {
+    width: 30px;
+    height: 30px;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+@media (max-width: 767px) {
+    .notification-icon img, svg {
+        width: 15px;
+        height: 15px;
+    }
+}
+
+
+@media (min-width: 480px) {
+    .navbar-expand-mysm {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+    }
+
+        .navbar-expand-mysm .navbar-nav {
+            flex-direction: row;
+        }
+
+            .navbar-expand-mysm .navbar-nav .dropdown-menu {
+                position: absolute;
+            }
+
+            .navbar-expand-mysm .navbar-nav .nav-link {
+                padding-right: var(--bs-navbar-nav-link-padding-x);
+                padding-left: var(--bs-navbar-nav-link-padding-x);
+            }
+
+        .navbar-expand-mysm .navbar-nav-scroll {
+            overflow: visible;
+        }
+
+        .navbar-expand-mysm .navbar-collapse {
+            display: flex !important;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-mysm .navbar-toggler {
+            display: none;
+        }
+
+        .navbar-expand-mysm .offcanvas {
+            position: static;
+            z-index: auto;
+            flex-grow: 1;
+            width: auto !important;
+            height: auto !important;
+            visibility: visible !important;
+            background-color: transparent !important;
+            border: 0 !important;
+            transform: none !important;
+            transition: none;
+        }
+
+            .navbar-expand-mysm .offcanvas .offcanvas-header {
+                display: none;
+            }
+
+            .navbar-expand-mysm .offcanvas .offcanvas-body {
+                display: flex;
+                flex-grow: 0;
+                padding: 0;
+                overflow-y: visible;
+            }
