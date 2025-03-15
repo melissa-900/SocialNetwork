@@ -37,13 +37,18 @@
   html, :host {
     line-height: 1.5;
     -webkit-text-size-adjust: 100%;
+    -moz-tab-size: 4;
     tab-size: 4;
     font-family: var( --default-font-family, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" );
     font-feature-settings: var(--default-font-feature-settings, normal);
     font-variation-settings: var( --default-font-variation-settings, normal );
     -webkit-tap-highlight-color: transparent;
+    /* */
+    font-feature-settings: normal;
+    font-variation-settings: normal;
   }
   body {
+    margin: 0;
     line-height: inherit;
   }
   hr {
