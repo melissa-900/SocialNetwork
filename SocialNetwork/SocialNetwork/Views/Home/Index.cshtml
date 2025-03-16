@@ -2,7 +2,7 @@
 	ViewData["Title"] = "Home";
 }
 
-@*<div id="site__main" class="text-center">
+@*<div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div> *@
@@ -12,13 +12,79 @@
 		<!-- create post section -->
 		<partial name="Modals/_CreatePost"></partial>
 
+		<!-- should be displayed only if there are no posts -->
+		<div class="col-md-8 text-muted text-center">There is no posts.</div>
+
 		<!-- posts feed -->
-		<div class="col-md-8">
-			<div id="posts-container">
-				<!-- placeholder for posts -->
-				<div class="text-muted text-center">There is no posts.</div>
+		<div id="posts-container" class="col-md-8">
+			<!-- single post -->
+			<div class="card mb-3">
+				<div class="card-body">
+					<!-- post header -->
+					<div>
+						<div class="d-flex justify-content-between align-items-center">
+							<div class="d-flex align-items-center">
+								<img src="images/user.png" class="me-2" width="40" height="40" alt="User Avatar"> <!-- rounded-circle -->
+								<div>
+									<strong>Name</strong> <br>
+									<small class="text-muted">@@nick</small>
+								</div>
+							</div>
+							<div class="dropdown">
+								<button class="btn btn-light btn-sm" data-bs-toggle="dropdown" aria-expanded="false">
+									<ion-icon name="ellipsis-horizontal"></ion-icon>
+								</button>
+								<ul class="dropdown-menu dropdown-menu-end">
+									<li><a class="dropdown-item text-danger" href="#">Delete post</a></li>
+								</ul>
+							</div>
+
+						</div>
+						<small class="text-muted">21:00 &nbsp;&nbsp; 16.03.2025</small>
+					</div>
+
+					<!-- post text -->
+					<p class="mt-2">
+						This is an example post. ngfnfntfcnngcngn hgcngnhgcnhgcnhgchmcg mkvmskvkdv fdbfdbfdbd igirjgisdjrigjijgird 54trjiegjirjsgkrg grdsgrndgrdngg grdgjrdgrd htrhtfhfg
+					</p>
+
+					<!-- image placeholder -->                                                                        <!-- onerror="this.style.display='none'; - to not display placeholder -->
+					<div class="text-center">
+						<img id="postImage" src="images/placeholder.jpg" class="img-fluid border" alt="Post Image" onerror="this.src='images/placeholder.jpg';" style="max-height: 500px; object-fit: cover; border-radius: 0;" />
+					</div>
+
+					<!-- post footer -->
+					<div class="d-flex mt-2">
+						<div>
+							<button class="btn btn-light btn-sm">
+								<ion-icon name="thumbs-up-outline"></ion-icon>
+							</button>
+							<span>0</span>
+							<button class="btn btn-light btn-sm">
+								<ion-icon name="thumbs-down-outline"></ion-icon>
+							</button>
+							<span>0</span>
+							<button class="btn btn-light btn-sm">
+								<ion-icon name="chatbox-outline"></ion-icon>
+							</button>
+							<span>0</span>
+						</div>
+						<div class="d-flex align-items-center ms-auto">
+							<button class="btn btn-light btn-sm me-2">
+								<ion-icon name="resize-outline"></ion-icon>
+							</button>
+						</div>
+					</div>
+
+					<!-- comment-section -->
+					<div class="comment-section mt-3">
+						<textarea class="form-control" rows="1" placeholder="..."></textarea>
+						<button class="btn btn-primary btn-sm mt-2 float-end me-4 me-sm-5">Post Comment</button>
+					</div>
+				</div>
 			</div>
 		</div>
+
 	</div>
 </div>
 
