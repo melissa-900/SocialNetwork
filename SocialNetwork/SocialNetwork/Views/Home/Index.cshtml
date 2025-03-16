@@ -1,8 +1,24 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+	ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
+@*<div id="site__main" class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div> *@
+
+<div id="site__main" class="container">
+	<div class="row justify-content-center">
+		<!-- create post section -->
+		<partial name="Modals/_CreatePost"></partial>
+
+		<!-- posts feed -->
+		<div class="col-md-8">
+			<div id="posts-container">
+				<!-- placeholder for posts -->
+				<div class="text-muted text-center">There is no posts.</div>
+			</div>
+		</div>
+	</div>
 </div>
+

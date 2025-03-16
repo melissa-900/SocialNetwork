@@ -25,16 +25,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
                     </ul>
 
                     <!-- search -->
                     <form class="d-flex w-50 mx-4" action="#" method="get">
                         <input class="form-control" type="search" placeholder="Search Profiles, Posts...">
                     </form>
-
                 </div>
 
                 <div class="d-flex align-items-center order-md-1 ms-auto"> <!-- class="hidden" for future code -->
@@ -83,23 +79,8 @@
     </header>
 
     <!-- notifications modal -->
-    <div class="modal fade" id="notificationModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="notificationModalLabel">Notifications</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>No new notifications</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mark all as read</button>
-                    <button type="button" class="btn bg-danger text-white" data-bs-dismiss="modal">Clean</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    @await Html.PartialAsync("Modals/_NotificationModal")
+
 
 
     <div class="container">
