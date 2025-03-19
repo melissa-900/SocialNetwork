@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35825.156 d17.13
+VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialNetwork", "SocialNetwork\SocialNetwork.csproj", "{45B5173F-78CE-4EC2-B312-631D76C495B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialNetwork.Data", "SocialNetwork.Data\SocialNetwork.Data.csproj", "{67F5A184-6B4F-4764-AEEE-159B12ABA292}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{45B5173F-78CE-4EC2-B312-631D76C495B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45B5173F-78CE-4EC2-B312-631D76C495B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45B5173F-78CE-4EC2-B312-631D76C495B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67F5A184-6B4F-4764-AEEE-159B12ABA292}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67F5A184-6B4F-4764-AEEE-159B12ABA292}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67F5A184-6B4F-4764-AEEE-159B12ABA292}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67F5A184-6B4F-4764-AEEE-159B12ABA292}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
