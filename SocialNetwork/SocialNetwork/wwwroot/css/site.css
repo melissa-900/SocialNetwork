@@ -65,8 +65,6 @@ body {
     }
 }
 
-/* my width for normal-menu */
-
 @media (min-width: 460px) {
     .navbar-expand-mysm {
         flex-wrap: nowrap;
@@ -122,3 +120,42 @@ body {
                 padding: 0;
                 overflow-y: visible;
             }
+}
+
+
+#sidebar {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    width: 300px;
+    padding: 10px;
+}
+
+#sidebar a {
+    text-decoration: none;
+}
+
+@media (max-width: 1484px) {
+    #sidebar {
+        width: 250px;
+    }
+}
+
+@media (max-width: 1272px) {
+    #sidebar {
+        width: 200px;
+    }
+}
+
+@media (max-width: 1050px) {
+    #sidebar {
+        position: relative;
+        width: 100%;
+        top: 0;
+    }
+
+        #sidebar .card-title {
+            font-size: 16px;
+            text-align: center;
+        }
+}
