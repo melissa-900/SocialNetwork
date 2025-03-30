@@ -19,8 +19,4 @@
     <ProjectReference Include="..\SocialNetwork.Data\SocialNetwork.Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Views\Shared\Components\" />
-  </ItemGroup>
-
 </Project>
