@@ -17,7 +17,7 @@ namespace SocialNetwork.Data.Helpers
                 var newUser = new User()
                 {
                     FullName = "Lorem ipsum",
-                    ProfilePictureUrl = "#"
+                    ProfilePictureUrl = "/images/user.png"
                 };
                 await appDBContext.Users.AddAsync(newUser);
                 await appDBContext.SaveChangesAsync();
