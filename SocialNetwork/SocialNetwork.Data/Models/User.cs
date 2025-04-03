@@ -10,6 +10,7 @@ namespace SocialNetwork.Data.Models
     {
         public int Id { get; set; }
         public string FullName { get; set; }
+        public string UserHandle { get; set; }
 
         public string? ProfilePictureUrl { get; set; }
         //Navigation properties
