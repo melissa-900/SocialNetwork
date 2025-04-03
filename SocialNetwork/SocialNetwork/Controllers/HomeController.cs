@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+
+
 namespace SocialNetwork.Controllers;
 
 public class HomeController : Controller
@@ -15,4 +17,5 @@ public class HomeController : Controller
     {
         return View();
     }
+
 }
