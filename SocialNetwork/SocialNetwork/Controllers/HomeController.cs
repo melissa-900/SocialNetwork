@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using SocialNetwork.Data;
 using SocialNetwork.Data.Models;
 using SocialNetwork.ViewModels.Home;
@@ -43,6 +44,26 @@ public class HomeController : Controller
             NrOfReports = 0,
             UserId = loggedInUser
         };
+
+        // Check and save the image
+        if (post.Image != null && post.Image.Length > 0)
+        {
+            string rootFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            if (post.Image.ContentType.Contains("image"))
+            {
+                string rootFolderPathImages = Path.Combine(rootFolderPath, "images/uploaded");
+                Directory.CreateDirectory(rootFolderPathImages);
+
+                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(post.Image.FileName);
+                string filePath = Path.Combine(rootFolderPathImages, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                    await post.Image.CopyToAsync(stream);
+
+                // Set the URL to the newPost object
+                newPost.ImageUrl = "/images/uploaded/" + fileName;
+            }
+        }
 
         // Add the post to the database
         await _context.Posts.AddAsync(newPost);
