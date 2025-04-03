@@ -1,0 +1,87 @@
+﻿@model Post
+
+@{
+	TimeSpan timeSpanSincePosted = DateTime.UtcNow.Subtract(Model.DateCreated);
+
+	string displayTime = timeSpanSincePosted switch
+	{
+		var t when t.TotalDays >= 1 => $"{(int)t.TotalDays}d ago",
+		var t when t.TotalHours >= 1 => $"{(int)t.TotalHours}h ago",
+		var t when t.TotalMinutes >= 1 => $"{(int)t.TotalMinutes}m ago",
+		_ => "Just now"
+	};
+}
+
+<div class="card mb-3">
+	<div class="card-body">
+		<!-- post header -->
+		<div>
+			<div class="d-flex justify-content-between align-items-center">
+				<div class="d-flex align-items-center">
+					<img src="@(Model.User.ProfilePictureUrl ?? "images/user.png")" class="me-2" width="40" height="40">
+					<div>
+						<strong>@Model.User.FullName</strong> <br>
+						<small class="text-muted">@@@Model.User.UserHandle</small>
+					</div>
+				</div>
+				<div class="dropdown">
+					<button class="btn btn-light btn-sm" data-bs-toggle="dropdown" aria-expanded="false">
+						<ion-icon name="ellipsis-horizontal"></ion-icon>
+					</button>
+					<ul class="dropdown-menu dropdown-menu-end">
+						<li><a class="dropdown-item text-danger" href="#">Delete post</a></li>
+						<li><a class="dropdown-item" href="#">Edit post</a></li>
+						<li><a class="dropdown-item text-danger" href="#">Report</a></li>
+					</ul>
+				</div>
+
+			</div>
+			<small class="text-muted" title="@displayTime">@Model.DateCreated.ToString("HH:mm  MM/dd/yyyy")</small>
+		</div>
+
+		<!-- post text -->
+		<p class="mt-2">
+			@Model.Content
+		</p>
+
+		<!-- image placeholder -->                                                                        <!-- onerror="this.style.display='none'; - to not display placeholder -->
+		@if (!string.IsNullOrEmpty(Model.ImageUrl))
+		{
+			<div class="text-center">
+				<img id="postImage" src="@Model.ImageUrl" class="img-fluid border" alt="Post Image" onerror="this.src='images/placeholder.jpg';" style="max-height: 500px; object-fit: cover; border-radius: 0;" />
+			</div>
+		}
+
+		<!-- post footer -->
+		<div class="d-flex mt-2">
+			<div>
+				<button class="btn btn-light btn-sm">
+					<ion-icon name="thumbs-up-outline"></ion-icon>
+				</button>
+				<span>0</span>
+				<button class="btn btn-light btn-sm">
+					<ion-icon name="thumbs-down-outline"></ion-icon>
+				</button>
+				<span>0</span>
+				<button class="btn btn-light btn-sm">
+					<ion-icon name="chatbox-outline"></ion-icon>
+				</button>
+				<span>0</span>
+			</div>
+			<div class="d-flex align-items-center ms-auto">
+				<button class="btn btn-light btn-sm me-2">
+					<ion-icon name="bookmark-outline"></ion-icon>
+				</button>
+				<button class="btn btn-light btn-sm me-2">
+					<ion-icon name="resize-outline"></ion-icon>
+				</button>
+			</div>
+		</div>
+
+		<!-- comment-section -->
+		<div class="comment-section mt-3">
+			<textarea class="form-control" rows="1" placeholder="..."></textarea>
+			<button class="btn btn-primary btn-sm mt-2 float-end me-4 me-sm-5">Post Comment</button>
+		</div>
+	</div>
+</div>
