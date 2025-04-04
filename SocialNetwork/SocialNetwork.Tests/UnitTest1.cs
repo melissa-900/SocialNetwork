@@ -31,6 +31,10 @@ namespace SocialNetwork.Tests
 
             // Create controller with InMemory context
             _controller = new HomeController(_mockLogger.Object, _context);
+
+            // Clean the database before each test
+            _context.Database.EnsureDeleted();
+            _context.Database.EnsureCreated();
         }
 
         // CrestePost TESTS
@@ -51,7 +55,50 @@ namespace SocialNetwork.Tests
             // Assert
             var postCount = await _context.Posts.CountAsync();
             Assert.Equal(1, postCount); // Check if post was added
-            Assert.IsType<RedirectToActionResult>(result); // Ensure it redirects to Index page
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("Index", redirectResult.ActionName);
         }
+
+        // Like TESTS
+
+        [Fact]
+        public async Task LikePost_ShouldToggleLike()
+        {
+            // Arrange
+            int userId = 1;
+            var post = new Post
+            {
+                Id = 1,
+                Content = "Test Post",
+                DateCreated = DateTime.UtcNow,
+                UserId = userId
+            };
+
+            // Add Post to DB
+            await _context.Posts.AddAsync(post);
+            await _context.SaveChangesAsync();
+
+            var like = new Like
+            {
+                PostId = post.Id,
+                UserId = userId
+            };
+
+            // Add Like to DB
+            await _context.Likes.AddAsync(like);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var likesCount = await _context.Likes.CountAsync(l => l.PostId == post.Id && l.UserId == userId);
+            Assert.Equal(1, likesCount); // Check if Like added
+
+            _context.Likes.Remove(like);
+            await _context.SaveChangesAsync();
+
+            // Assert
+            likesCount = await _context.Likes.CountAsync(l => l.PostId == post.Id && l.UserId == userId);
+            Assert.Equal(0, likesCount); // Check if Like removed
+        }
+
     }
 }

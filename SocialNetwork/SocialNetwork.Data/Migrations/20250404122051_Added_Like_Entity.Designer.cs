@@ -12,7 +12,7 @@ using SocialNetwork.Data;
 namespace SocialNetwork.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20250403133602_Added_Like_Entity")]
+    [Migration("20250404122051_Added_Like_Entity")]
     partial class Added_Like_Entity
     {
         /// <inheritdoc />
@@ -92,6 +92,10 @@ namespace SocialNetwork.Migrations
                     b.Property<string>("ProfilePictureUrl")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserHandle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Users");
@@ -102,7 +106,7 @@ namespace SocialNetwork.Migrations
                     b.HasOne("SocialNetwork.Data.Models.Post", "Post")
                         .WithMany("Likes")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("SocialNetwork.Data.Models.User", "User")
