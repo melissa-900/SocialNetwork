@@ -57,6 +57,7 @@ namespace SocialNetwork.Tests
             Assert.Equal(1, postCount); // Check if post was added
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("Index", redirectResult.ActionName);
+            Assert.IsType<RedirectToActionResult>(result);
         }
 
         // Like TESTS
