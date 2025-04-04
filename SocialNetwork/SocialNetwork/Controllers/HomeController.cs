@@ -21,7 +21,10 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var allPosts = await _context.Posts.Include(n => n.User).OrderByDescending(n => n.DateCreated).ToListAsync();
+        var allPosts = await _context.Posts.Include(n => n.User).
+            OrderByDescending(n => n.DateCreated).
+            Include(n => n.Likes).
+            ToListAsync();
 
         return View(allPosts);
     }
@@ -70,5 +73,30 @@ public class HomeController : Controller
         // Redirect to the index page
         return RedirectToAction("Index");
     }
-    
+
+    [HttpPost]
+    public async Task<IActionResult> TogglePostLike(PostLikeVM postLikeVM) 
+    {
+        int loggedInUser = 1;
+        // chek if the user has already liked the post
+        var like = await _context.Likes.Where(n => n.UserId == loggedInUser && n.PostId == postLikeVM.PostId).FirstOrDefaultAsync();
+        if (like != null)
+        {
+            _context.Likes.Remove(like);
+            await _context.SaveChangesAsync();
+        }
+        else
+        {
+            var newlike = new Like()
+            {
+                PostId = postLikeVM.PostId,
+                UserId = loggedInUser
+            };
+            await _context.Likes.AddAsync(newlike);
+            await _context.SaveChangesAsync();
+        }
+        return RedirectToAction("Index");
+        
+    }
+
 }
