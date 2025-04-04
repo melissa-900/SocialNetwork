@@ -103,7 +103,7 @@ namespace SocialNetwork.Migrations
                     b.HasOne("SocialNetwork.Data.Models.Post", "Post")
                         .WithMany("Likes")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("SocialNetwork.Data.Models.User", "User")
