@@ -35,6 +35,7 @@ namespace SocialNetwork.Tests
             // Clean the database before each test
             _context.Database.EnsureDeleted();
             _context.Database.EnsureCreated();
+
         }
 
         // CrestePost TESTS
@@ -55,6 +56,7 @@ namespace SocialNetwork.Tests
             // Assert
             var postCount = await _context.Posts.CountAsync();
             Assert.Equal(1, postCount); // Check if post was added
+
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("Index", redirectResult.ActionName);
             Assert.IsType<RedirectToActionResult>(result);
