@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +5,6 @@ using Microsoft.Extensions.Hosting;
 using SocialNetwork.Data;
 using SocialNetwork.Data.Models;
 using SocialNetwork.ViewModels.Home;
-
 
 namespace SocialNetwork.Controllers;
 
@@ -72,4 +70,5 @@ public class HomeController : Controller
         // Redirect to the index page
         return RedirectToAction("Index");
     }
+    
 }
