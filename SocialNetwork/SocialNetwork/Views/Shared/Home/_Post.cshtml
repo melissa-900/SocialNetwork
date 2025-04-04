@@ -55,16 +55,17 @@
 		<!-- post footer -->
 		<div class="d-flex mt-2">
 			<div>
-				<button class="btn btn-light btn-sm">
+
+				<div class="d-flex">
 					<form asp-controller="Home" asp-action="TogglePostLike">
                         <input type="hidden" name="postId" value="@Model.Id" />
-						<button type="submit">
-                            <ion-icon name="@(Model.Likes.Any(n => n.UserId==1)?"thumbs-up":"thumbs-up-outline")"> </ion-icon>
+						<button type="submit" class="btn btn-light">
+							<ion-icon style="font-size: 18px;" name="@(Model.Likes.Any(n => n.UserId == 1) ? "thumbs-up" : "thumbs-up-outline")"> </ion-icon>  <!-- ion-icon name="thumbs-up-sharp" style="font-size: 20px; color: @@(Model.Likes.Any(n => n.UserId == 1) ? "#1E90FF" : "#D3D3D3");" -->
 						</button>
 					</form>
-					
-				</button>
-				<span>@Model.Likes.Count</span>
+					<span class="ms-2">@Model.Likes.Count</span>
+				</div>
+
 				@* <button class="btn btn-light btn-sm"> *@
 				@* 	<ion-icon name="thumbs-down-outline"></ion-icon> *@
 				@* </button> *@
