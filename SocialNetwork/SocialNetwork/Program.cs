@@ -11,7 +11,7 @@ builder.Services.AddControllersWithViews();
 //Database Configuration
 var dbConnectionString = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<AppDBContext>(options=> options.UseSqlServer(dbConnectionString));
-var app = builder.Build();
+var app = builder.Build(); 
 //Seed the database with initial data
 using (var scope = app.Services.CreateScope())
 {
@@ -28,6 +28,8 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+
 app.UseRouting();
 
 app.UseAuthorization();

@@ -17,7 +17,8 @@ namespace SocialNetwork.Data.Helpers
                 var newUser = new User()
                 {
                     FullName = "Lorem ipsum",
-                    ProfilePictureUrl = "#"
+                    UserHandle = "nick",
+                    ProfilePictureUrl = "/images/user.png"
                 };
                 await appDBContext.Users.AddAsync(newUser);
                 await appDBContext.SaveChangesAsync();
@@ -27,7 +28,7 @@ namespace SocialNetwork.Data.Helpers
                     ImageUrl = " ",
                     NrOfReports =0,
                     DateCreated = DateTime.UtcNow,
-                    DateUpdeted = DateTime.UtcNow,
+                    DateUpdated = DateTime.UtcNow,
                     UserId = newUser.Id
                 };
                 var newPostWithImage = new Post()
@@ -36,7 +37,7 @@ namespace SocialNetwork.Data.Helpers
                     ImageUrl = "https://i.etsystatic.com/28810262/r/il/2fc5e0/5785166966/il_1588xN.5785166966_nvy4.jpg",
                     NrOfReports = 0,
                     DateCreated = DateTime.UtcNow,
-                    DateUpdeted = DateTime.UtcNow,
+                    DateUpdated = DateTime.UtcNow,
                     UserId = newUser.Id
                 };
 

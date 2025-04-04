@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -17,6 +17,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SocialNetwork.Data\SocialNetwork.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\images\uploaded\" />
   </ItemGroup>
 
 </Project>
