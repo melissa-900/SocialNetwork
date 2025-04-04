@@ -20,7 +20,7 @@ namespace SocialNetwork.Data
 
             modelBuilder.Entity<Like>().HasKey(l => new { l.PostId, l.UserId });
 
-            modelBuilder.Entity<Like>().HasOne(l => l.Post).WithMany(p => p.Likes).HasForeignKey(l => l.PostId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Like>().HasOne(l => l.Post).WithMany(p => p.Likes).HasForeignKey(l => l.PostId).OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Like>().HasOne(l => l.User).WithMany(u => u.Likes).HasForeignKey(l => l.UserId).OnDelete(DeleteBehavior.Restrict);
 
