@@ -1,10 +1,24 @@
+using Microsoft.EntityFrameworkCore;
+using SocialNetwork.Data;
+using SocialNetwork.Data.Helpers;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-var app = builder.Build();
 
+//Database Configuration
+var dbConnectionString = builder.Configuration.GetConnectionString("Default");
+builder.Services.AddDbContext<AppDBContext>(options=> options.UseSqlServer(dbConnectionString));
+var app = builder.Build(); 
+//Seed the database with initial data
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDBContext>();
+    await dbContext.Database.MigrateAsync();
+    await DbInitializer.SeedAsync(dbContext);
+}
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -14,6 +28,8 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+
 app.UseRouting();
 
 app.UseAuthorization();
