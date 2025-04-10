@@ -67,6 +67,7 @@
 					<ion-icon name="chatbox-outline"></ion-icon>
 				</button>
 				<span>0</span>
+				<a href="#">@Model.Comments.Count</a>
 			</div>
 			<div class="d-flex align-items-center ms-auto">
 				<button class="btn btn-light btn-sm me-2">
@@ -79,9 +80,75 @@
 		</div>
 
 		<!-- comment-section -->
-		<div class="comment-section mt-3">
-			<textarea class="form-control" rows="1" placeholder="..."></textarea>
-			<button class="btn btn-primary btn-sm mt-2 float-end me-4 me-sm-5">Post Comment</button>
+		<div>
+			<div class=" p2.5 border-t border-grey-100 font-normal space-y-3 relative">
+
+				@foreach(var comment in Model.Comments.OrderByDescending(n => n.DateCreated).Take(3))
+				{
+
+				TimeSpan commentTimeSpanSincePosted = DateTime.UtcNow.Subtract(comment.DateCreated);
+
+                string commentDisplayTime = commentTimeSpanSincePosted switch
+                {
+	                var t when t.TotalDays >= 1 => $"{(int)t.TotalDays}d ago",
+	                var t when t.TotalHours >= 1 => $"{(int)t.TotalHours}h ago",
+	                var t when t.TotalMinutes >= 1 => $"{(int)t.TotalMinutes}m ago",
+	                _ => "Just now"
+                };
+
+				   <div class="flex items-start gap-3 relative">
+					   <a>
+						   <img src="@(comment.User.ProfilePictureUrl ?? "images/user.png")" class="w-6 h-6 mt-1 rounded-full" />
+					   </a>
+					   <div class="flex-1">
+						   <div class="flex justify-content-between">
+							   <a class="text-black font-medium inline-block flex-grow">
+								   @comment.User.FullName
+							   </a>
+                               <small>@commentDisplayTime</small>
+						   </div>
+                           <div class="flex items-center justify-between">
+                               <p class="mt-0.5">
+                                   @comment.Content
+                               </p>\
+
+							   <form asp-controller="Home" asp-action="RemovePostComment">
+								   <input type = "hidden" name="commentId" value="@comment.Id"/>\
+								   <botton typeof="submit" class="text-red-500 text-xs ml-2" title="Remove post comment">
+									   <ion-icon name="trash-outline"></ion-icon>
+								   </botton>
+							   </form>
+                           </div>
+						   
+					   </div>
+
+				   </div> 				
+				}
+
+				@if(Model.Comments.Count >= 3)
+				{
+				   <div class="p-1.5">
+                       <a>
+					       Show all comments
+					   </a>
+				   </div>
+				}
+				
+			</div>
+
+			<form asp-controller="Home" asp-action="AddPostComment">
+				<div class="sm:px-4 sm:py-3 p2.5 border-t border-grey-100 flex item-center gap-1">
+					<img src="~/images/avatar/user.png" class="w-6 h-6 rounded-full" />
+
+						<input type="hidden" name="postId" value="@Model.Id"/>
+						<div class="comment-section mt-3">
+							<textarea name="content" class="form-control" rows="1" placeholder="..."></textarea>
+						</div>
+
+						<button type="submit" class="btn btn-primary btn-sm mt-2 float-end me-4 me-sm-5">Post Comment</button>
+					
+				</div>
+			</form>		
 		</div>
 	</div>
 </div>
