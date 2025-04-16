@@ -24,6 +24,7 @@ public class HomeController : Controller
         var allPosts = await _context.Posts
         .Include(n => n.User)
         .Include(n => n.Comments)
+        .Include(n=> n.Likes)
         .ThenInclude(n => n.User)
         .OrderByDescending(n => n.DateCreated)
         .ToListAsync();
@@ -102,6 +103,31 @@ public class HomeController : Controller
     }
 
     [HttpPost]
+    public async Task<IActionResult> TogglePostFavorite(PostFavoriteVM postFavoriteVM)
+    {
+        int loggedInUser = 1;
+        // chek if the user has already favorited the post
+        var favorite = await _context.Favorites.Where(n => n.UserId == loggedInUser && n.PostId == postFavoriteVM.PostId).FirstOrDefaultAsync();
+        if (favorite != null)
+        {
+            _context.Favorites.Remove(favorite);
+            await _context.SaveChangesAsync();
+        }
+        else
+        {
+            var newFavorite = new Favorite()
+            {
+                PostId = postFavoriteVM.PostId,
+                UserId = loggedInUser
+            };
+            await _context.Favorites.AddAsync(newFavorite);
+            await _context.SaveChangesAsync();
+        }
+        return RedirectToAction("Index");
+
+    }
+
+    [HttpPost]
     public async Task<IActionResult> AddPostComment(PostCommentVM postCommentVM)
     {
         int loggedInUser = 1;
@@ -137,4 +163,6 @@ public class HomeController : Controller
 
     }
     
+
+
 }
