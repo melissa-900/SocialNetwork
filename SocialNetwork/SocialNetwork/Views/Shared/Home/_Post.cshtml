@@ -72,12 +72,17 @@
 			<div class="d-flex align-items-center ms-auto">
 				<form asp-controller="Home" asp-action="TogglePostFavorite">
 					<input type="hidden" name="postId" value="@Model.Id" />
-					<button type="submit" class="btn btn-light btn-sm me-2 @(Model.Favorites.Any(n=> n.UserId==1)? "text-black-500 bt-black-100" : "")">
-						<ion-icon name="@(Model.Favorites.Any(n=> n.UserId==1)? "bookmark" : "bookmark-outline")"></ion-icon> 
+					<button type="submit" class="btn btn-light btn-sm me-2">
+						<ion-icon  name="@(Model.Favorites.Any(n => n.UserId==1)?"bookmark":"bookmark-outline")"> </ion-icon>
 					</button>
+					@if (Model.Favorites.Count != 0)
+					{
+						<span>@Model.Favorites.Count</span>
+					}
+					
 				</form>
 				
-
+				
 				<button class="btn btn-light btn-sm me-2">
 					<ion-icon name="resize-outline"></ion-icon>
 				</button>

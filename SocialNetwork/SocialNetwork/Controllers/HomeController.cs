@@ -25,6 +25,7 @@ public class HomeController : Controller
         .Include(n => n.User)
         .Include(n => n.Comments)
         .Include(n=> n.Likes)
+        .Include(n => n.Favorites)
         .ThenInclude(n => n.User)
         .OrderByDescending(n => n.DateCreated)
         .ToListAsync();
@@ -107,7 +108,7 @@ public class HomeController : Controller
     {
         int loggedInUser = 1;
         // chek if the user has already favorited the post
-        var favorite = await _context.Favorites.Where(n => n.UserId == loggedInUser && n.PostId == postFavoriteVM.PostId).FirstOrDefaultAsync();
+        var favorite = await _context.Favorites.Where(n => n.PostId == postFavoriteVM.PostId && n.UserId == loggedInUser).FirstOrDefaultAsync();
         if (favorite != null)
         {
             _context.Favorites.Remove(favorite);
