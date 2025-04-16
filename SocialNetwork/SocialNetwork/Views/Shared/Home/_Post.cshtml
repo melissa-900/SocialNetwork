@@ -10,6 +10,8 @@
 		var t when t.TotalMinutes >= 1 => $"{(int)t.TotalMinutes}m ago",
 		_ => "Just now"
 	};
+	bool isFavorited = Model.Favorites.Any(n => n.UserId == 1);
+    bool isPrivate = Model.IsPrivate == true && Model.UserId == 1;
 }
 
 <div class="card mb-3">
@@ -30,7 +32,20 @@
 					</button>
 					<ul class="dropdown-menu dropdown-menu-end">
 						<li><a class="dropdown-item text-danger" href="#">Delete post</a></li>
-						<li><a class="dropdown-item" href="#">Edit post</a></li>
+						@if(Model.UserId == 1)
+						{
+						<form asp-controller="Home" asp-action="TogglePostVisibility">
+							<input type="hidden" name="postId" value="@Model.Id" />
+							<button type="submit">
+
+						<li class="dropdown-item">Set as @(isPrivate?"public":"private")</li>
+						</button>
+
+						</form>
+						}
+						
+						
+
 						<li><a class="dropdown-item text-danger" href="#">Report</a></li>
 					</ul>
 				</div>
@@ -73,7 +88,7 @@
 				<form asp-controller="Home" asp-action="TogglePostFavorite">
 					<input type="hidden" name="postId" value="@Model.Id" />
 					<button type="submit" class="btn btn-light btn-sm me-2">
-						<ion-icon  name="@(Model.Favorites.Any(n => n.UserId==1)?"bookmark":"bookmark-outline")"> </ion-icon>
+						<ion-icon  name="@(isFavorited?"bookmark":"bookmark-outline")"> </ion-icon>
 					</button>
 					@if (Model.Favorites.Count != 0)
 					{
