@@ -32,19 +32,17 @@
 					</button>
 					<ul class="dropdown-menu dropdown-menu-end">
 						<li><a class="dropdown-item text-danger" href="#">Delete post</a></li>
+
 						@if(Model.UserId == 1)
 						{
 						<form asp-controller="Home" asp-action="TogglePostVisibility">
 							<input type="hidden" name="postId" value="@Model.Id" />
 							<button type="submit">
-
-						<li class="dropdown-item">Set as @(isPrivate?"public":"private")</li>
-						</button>
+								<li type="submit"><a class="dropdown-item">Set as @(isPrivate ? "public" : "private")</a></li>
+							</button>
 
 						</form>
 						}
-						
-						
 
 						<li><a class="dropdown-item text-danger" href="#">Report</a></li>
 					</ul>
@@ -70,110 +68,108 @@
 		<!-- post footer -->
 		<div class="d-flex mt-2">
 			<div>
-				<button class="btn btn-light btn-sm">
-					<ion-icon name="thumbs-up-outline"></ion-icon>
-				</button>
-				<span>0</span>
-				<button class="btn btn-light btn-sm">
-					<ion-icon name="thumbs-down-outline"></ion-icon>
-				</button>
-				<span>0</span>
-				<button class="btn btn-light btn-sm">
-					<ion-icon name="chatbox-outline"></ion-icon>
-				</button>
-				<span>0</span>
-				<a href="#">@Model.Comments.Count</a>
+				<div class="d-flex">
+					<form asp-controller="Home" asp-action="TogglePostLike">
+						<input type="hidden" name="postId" value="@Model.Id" />
+						<button type="submit" class="btn btn-light">
+							<ion-icon style="font-size: 18px;" name="@(Model.Likes.Any(n => n.UserId == 1) ? "thumbs-up" : "thumbs-up-outline")"> </ion-icon>  <!-- ion-icon name="thumbs-up-sharp" style="font-size: 20px; color: @@(Model.Likes.Any(n => n.UserId == 1) ? "#1E90FF" : "#D3D3D3");" -->
+						</button>
+					</form>
+					<span class="ms-2">@Model.Likes.Count</span>
+
+					@*
+					<button class="btn btn-light btn-sm">
+						<ion-icon style="font-size: 18px;" name="thumbs-down-outline"></ion-icon>
+					</button>
+					<span>0</span>
+					*@
+
+					<button class="btn btn-light ms-2">
+						<ion-icon style="font-size: 18px;" name="chatbox-outline"></ion-icon>
+					</button>
+					<span class="ms-2" href="#">@Model.Comments.Count</span>
+				</div>
 			</div>
 			<div class="d-flex align-items-center ms-auto">
-				<form asp-controller="Home" asp-action="TogglePostFavorite">
-					<input type="hidden" name="postId" value="@Model.Id" />
-					<button type="submit" class="btn btn-light btn-sm me-2">
-						<ion-icon  name="@(isFavorited?"bookmark":"bookmark-outline")"> </ion-icon>
-					</button>
-					@if (Model.Favorites.Count != 0)
-					{
-						<span>@Model.Favorites.Count</span>
-					}
-					
-				</form>
+				<div class="me-2">
+					<form asp-controller="Home" asp-action="TogglePostFavorite">
+						<input type="hidden" name="postId" value="@Model.Id" />
+						<button type="submit" class="btn btn-light">
+							<ion-icon name="@(isFavorited?"bookmark":"bookmark-outline")"> </ion-icon>
+						</button>
+						@if (Model.Favorites.Count != 0)
+						{
+							<span class="ms-2">@Model.Favorites.Count</span>
+						}
+					</form>
+				</div>
 				
-				
-				<button class="btn btn-light btn-sm me-2">
+				<button class="btn btn-light me-2">
 					<ion-icon name="resize-outline"></ion-icon>
 				</button>
 			</div>
 		</div>
 
+
 		<!-- comment-section -->
-		<div>
-			<div class=" p2.5 border-t border-grey-100 font-normal space-y-3 relative">
+		<div class="mt-3">
+			<div class="p-3 border-top border-light">
 
-				@foreach(var comment in Model.Comments.OrderByDescending(n => n.DateCreated).Take(3))
+				@foreach (var comment in Model.Comments.OrderByDescending(n => n.DateCreated).Take(3))
 				{
+					TimeSpan commentTimeSpanSincePosted = DateTime.UtcNow.Subtract(comment.DateCreated);
 
-				TimeSpan commentTimeSpanSincePosted = DateTime.UtcNow.Subtract(comment.DateCreated);
+					string commentDisplayTime = commentTimeSpanSincePosted switch
+					{
+						var t when t.TotalDays >= 1 => $"{(int)t.TotalDays}d ago",
+						var t when t.TotalHours >= 1 => $"{(int)t.TotalHours}h ago",
+						var t when t.TotalMinutes >= 1 => $"{(int)t.TotalMinutes}m ago",
+						_ => "Just now"
+					};
 
-                string commentDisplayTime = commentTimeSpanSincePosted switch
-                {
-	                var t when t.TotalDays >= 1 => $"{(int)t.TotalDays}d ago",
-	                var t when t.TotalHours >= 1 => $"{(int)t.TotalHours}h ago",
-	                var t when t.TotalMinutes >= 1 => $"{(int)t.TotalMinutes}m ago",
-	                _ => "Just now"
-                };
-
-				   <div class="flex items-start gap-3 relative">
-					   <a>
-						   <img src="@(comment.User.ProfilePictureUrl ?? "images/user.png")" class="w-6 h-6 mt-1 rounded-full" />
-					   </a>
-					   <div class="flex-1">
-						   <div class="flex justify-content-between">
-							   <a class="text-black font-medium inline-block flex-grow">
-								   @comment.User.FullName
-							   </a>
-                               <small>@commentDisplayTime</small>
-						   </div>
-                           <div class="flex items-center justify-between">
-                               <p class="mt-0.5">
-                                   @comment.Content
-                               </p>\
-
-							   <form asp-controller="Home" asp-action="RemovePostComment">
-								   <input type = "hidden" name="commentId" value="@comment.Id"/>\
-								   <botton typeof="submit" class="text-red-500 text-xs ml-2" title="Remove post comment">
-									   <ion-icon name="trash-outline"></ion-icon>
-								   </botton>
-							   </form>
-                           </div>
-						   
-					   </div>
-
-				   </div> 				
+					<div class="d-flex mb-3">
+						<a>
+							<img src="@(comment.User.ProfilePictureUrl ?? "images/user.png")" class="mt-1" style="width: 32px; height: 32px;" />
+						</a>
+						<div class="flex-grow-1 ms-2">
+							<div class="d-flex justify-content-between">
+								<a class="fw-semibold text-dark text-decoration-none">@comment.User.FullName</a>
+								<small class="text-muted">@commentDisplayTime</small>
+							</div>
+							<div class="d-flex justify-content-between mt-1">
+								<p class="mb-1">@comment.Content</p>
+								<form asp-controller="Home" asp-action="RemovePostComment" class="ms-2">
+									<input type="hidden" name="commentId" value="@comment.Id" />
+									<button type="submit" class="btn btn-link text-danger btn-sm p-0" title="Remove comment">
+										<ion-icon name="trash-outline"></ion-icon>
+									</button>
+								</form>
+							</div>
+						</div>
+					</div>
 				}
 
-				@if(Model.Comments.Count >= 3)
+				@if (Model.Comments.Count >= 3)
 				{
-				   <div class="p-1.5">
-                       <a>
-					       Show all comments
-					   </a>
-				   </div>
+					<div class="px-2">
+						<a href="#" class="text-decoration-none">Show all comments</a>
+					</div>
 				}
-				
 			</div>
 
 			<form asp-controller="Home" asp-action="AddPostComment">
-				<div class="sm:px-4 sm:py-3 p2.5 border-t border-grey-100 flex item-center gap-1">
-					<img src="~/images/avatar/user.png" class="w-6 h-6 rounded-full" />
+				<div class="d-flex align-items-start border-top border-light px-3 py-3">
+					<img src="~/images/user.png" class="rounded-circle me-2" style="width: 32px; height: 32px;" />
 
-						<input type="hidden" name="postId" value="@Model.Id"/>
-						<div class="comment-section mt-3">
-							<textarea name="content" class="form-control" rows="1" placeholder="..."></textarea>
+					<div class="flex-grow-1">
+						<input type="hidden" name="postId" value="@Model.Id" />
+						<textarea name="content" class="form-control mb-2" rows="1" placeholder="..."></textarea>
+						<div class="text-end">
+							<button type="submit" class="btn btn-primary btn-sm">Post Comment</button>
 						</div>
-
-						<button type="submit" class="btn btn-primary btn-sm mt-2 float-end me-4 me-sm-5">Post Comment</button>
-					
+					</div>
 				</div>
-			</form>		
+			</form>
 		</div>
 	</div>
 </div>
