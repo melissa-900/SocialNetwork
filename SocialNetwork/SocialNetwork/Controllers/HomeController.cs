@@ -21,12 +21,15 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
+        int loggeedInUser = 1;
         var allPosts = await _context.Posts
+        .Where(n=> (!n.IsPrivate || n.UserId==loggeedInUser) && n.Reports.Count<5)
         .Include(n => n.User)
         .Include(n => n.Comments)
         .Include(n=> n.Likes)
         .Include(n => n.Favorites)
         .ThenInclude(n => n.User)
+        .Include(n => n.Reports)
         .OrderByDescending(n => n.DateCreated)
         .ToListAsync();
 
@@ -129,6 +132,23 @@ public class HomeController : Controller
     }
 
     [HttpPost]
+    public async Task<IActionResult> TogglePostVisibility(PostVisibilityVM postVisibilityVM)
+    {
+        int loggedInUser = 1;
+        // get post bu id and user id
+        var post = await _context.Posts.FirstOrDefaultAsync(n => n.Id == postVisibilityVM.PostId && n.UserId == loggedInUser);
+        if (post != null)
+        {
+            post.IsPrivate = !post.IsPrivate;
+            _context.Posts.Update(post);
+            await _context.SaveChangesAsync();
+        }
+        
+        return RedirectToAction("Index");
+
+    }
+
+    [HttpPost]
     public async Task<IActionResult> AddPostComment(PostCommentVM postCommentVM)
     {
         int loggedInUser = 1;
@@ -146,6 +166,25 @@ public class HomeController : Controller
         await _context.Comments.AddAsync(newComment);
         await _context.SaveChangesAsync();
         
+        return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddPostReport(PostReportVM postReportVM)
+    {
+        int loggedInUser = 1;
+
+        //Creat a post object
+        var newReport = new Report()
+        {
+            UserId = loggedInUser,
+            PostId = postReportVM.PostId,
+            DateCreated = DateTime.UtcNow,
+        };
+
+        await _context.Reports.AddAsync(newReport);
+        await _context.SaveChangesAsync();
+
         return RedirectToAction("Index");
     }
 

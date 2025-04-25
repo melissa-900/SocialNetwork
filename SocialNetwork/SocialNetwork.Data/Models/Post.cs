@@ -13,6 +13,7 @@ namespace SocialNetwork.Data.Models
 
         public int NrOfReports { get; set; }
 
+        public bool IsPrivate { get; set; }
         public DateTime DateCreated { get; set; }
 
         public DateTime DateUpdated { get; set; }
@@ -26,5 +27,6 @@ namespace SocialNetwork.Data.Models
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
         public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
+        public ICollection<Report> Reports { get; set; } = new List<Report>();
     }
 }
