@@ -21,7 +21,9 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
+        int loggeedInUser = 1;
         var allPosts = await _context.Posts
+        .Where(n=> !n.IsPrivate || n.UserId==loggeedInUser)
         .Include(n => n.User)
         .Include(n => n.Comments)
         .Include(n=> n.Likes)
@@ -124,6 +126,23 @@ public class HomeController : Controller
             await _context.Favorites.AddAsync(newFavorite);
             await _context.SaveChangesAsync();
         }
+        return RedirectToAction("Index");
+
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> TogglePostVisibility(PostVisibilityVM postVisibilityVM)
+    {
+        int loggedInUser = 1;
+        // get post bu id and user id
+        var post = await _context.Posts.FirstOrDefaultAsync(n => n.Id == postVisibilityVM.PostId && n.UserId == loggedInUser);
+        if (post != null)
+        {
+            post.IsPrivate = !post.IsPrivate;
+            _context.Posts.Update(post);
+            await _context.SaveChangesAsync();
+        }
+        
         return RedirectToAction("Index");
 
     }
