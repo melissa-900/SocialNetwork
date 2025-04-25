@@ -23,12 +23,13 @@ public class HomeController : Controller
     {
         int loggeedInUser = 1;
         var allPosts = await _context.Posts
-        .Where(n=> !n.IsPrivate || n.UserId==loggeedInUser)
+        .Where(n=> (!n.IsPrivate || n.UserId==loggeedInUser) && n.Reports.Count<5)
         .Include(n => n.User)
         .Include(n => n.Comments)
         .Include(n=> n.Likes)
         .Include(n => n.Favorites)
         .ThenInclude(n => n.User)
+        .Include(n => n.Reports)
         .OrderByDescending(n => n.DateCreated)
         .ToListAsync();
 
@@ -165,6 +166,25 @@ public class HomeController : Controller
         await _context.Comments.AddAsync(newComment);
         await _context.SaveChangesAsync();
         
+        return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddPostReport(PostReportVM postReportVM)
+    {
+        int loggedInUser = 1;
+
+        //Creat a post object
+        var newReport = new Report()
+        {
+            UserId = loggedInUser,
+            PostId = postReportVM.PostId,
+            DateCreated = DateTime.UtcNow,
+        };
+
+        await _context.Reports.AddAsync(newReport);
+        await _context.SaveChangesAsync();
+
         return RedirectToAction("Index");
     }
 

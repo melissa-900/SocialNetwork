@@ -11,7 +11,9 @@
 		_ => "Just now"
 	};
 	bool isFavorited = Model.Favorites.Any(n => n.UserId == 1);
-    bool isPrivate = Model.IsPrivate == true && Model.UserId == 1;
+	bool isPrivate = Model.IsPrivate == true && Model.UserId == 1;
+	bool isReported = Model.Reports.Any(n => n.UserId == 1);
+	bool isLiked = Model.Likes.Any(n => n.UserId == 1);
 }
 
 <div class="card mb-3">
@@ -33,18 +35,29 @@
 					<ul class="dropdown-menu dropdown-menu-end">
 						<li><a class="dropdown-item text-danger" href="#">Delete post</a></li>
 
-						@if(Model.UserId == 1)
-						{
-						<form asp-controller="Home" asp-action="TogglePostVisibility">
-							<input type="hidden" name="postId" value="@Model.Id" />
-							<button type="submit">
-								<li type="submit"><a class="dropdown-item">Set as @(isPrivate ? "public" : "private")</a></li>
-							</button>
-
-						</form>
+						<li> 
+							@if(Model.UserId == 1)
+							{
+							<form asp-controller="Home" asp-action="TogglePostVisibility">
+								<input type="hidden" name="postId" value="@Model.Id" />
+								<button type="submit">
+                                    Set as @(isPrivate ? "public" : "private")
+                                </button>
+							</form>
 						}
+						</li>
 
-						<li><a class="dropdown-item text-danger" href="#">Report</a></li>
+						<li>
+							@if (!isReported)
+							{
+								<form asp-controller="Home" asp-action="AddPostReport">
+									<input type="hidden" name="postId" value="@Model.Id" />
+									<button type="submit">
+										Report
+									</button>
+								</form>
+							}
+						</li>
 					</ul>
 				</div>
 
@@ -72,7 +85,7 @@
 					<form asp-controller="Home" asp-action="TogglePostLike">
 						<input type="hidden" name="postId" value="@Model.Id" />
 						<button type="submit" class="btn btn-light">
-							<ion-icon style="font-size: 18px;" name="@(Model.Likes.Any(n => n.UserId == 1) ? "thumbs-up" : "thumbs-up-outline")"> </ion-icon>  <!-- ion-icon name="thumbs-up-sharp" style="font-size: 20px; color: @@(Model.Likes.Any(n => n.UserId == 1) ? "#1E90FF" : "#D3D3D3");" -->
+							<ion-icon style="font-size: 18px;" name="@(isLiked ? "thumbs-up" : "thumbs-up-outline")"> </ion-icon>  <!-- ion-icon name="thumbs-up-sharp" style="font-size: 20px; color: @@(Model.Likes.Any(n => n.UserId == 1) ? "#1E90FF" : "#D3D3D3");" -->
 						</button>
 					</form>
 					<span class="ms-2">@Model.Likes.Count</span>
