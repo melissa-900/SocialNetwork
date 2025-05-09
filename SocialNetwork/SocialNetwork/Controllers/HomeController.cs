@@ -23,7 +23,7 @@ public class HomeController : Controller
     {
         int loggeedInUser = 1;
         var allPosts = await _context.Posts
-        .Where(n=> (!n.IsPrivate || n.UserId==loggeedInUser) && n.Reports.Count<5)
+        .Where(n=> (!n.IsPrivate || n.UserId==loggeedInUser) && n.Reports.Count<5 && !n.IsDeleted)
         .Include(n => n.User)
         .Include(n => n.Comments)
         .Include(n=> n.Likes)
@@ -202,7 +202,18 @@ public class HomeController : Controller
         return RedirectToAction("Index");
 
     }
-    
 
+    [HttpPost]
+    public async Task<IActionResult> PostDelete(PostDeleteVM postDeleteVM)
+    {
+        var postDB = await _context.Posts.FirstOrDefaultAsync(p=> p.Id == postDeleteVM.PostId);
+        if (postDB != null)
+        {
+            postDB.IsDeleted = true;
+            _context.Posts.Update(postDB);
+            await _context.SaveChangesAsync();
+        }
+        return  RedirectToAction("Index");
+    }
 
 }

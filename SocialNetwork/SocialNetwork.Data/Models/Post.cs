@@ -18,6 +18,8 @@ namespace SocialNetwork.Data.Models
 
         public DateTime DateUpdated { get; set; }
 
+        public bool IsDeleted { get; set; }
+
         //Foreign Key
         public int UserId{ get; set; }
         //Navigation properties
