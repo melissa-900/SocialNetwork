@@ -16,7 +16,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDBContext>();
-    await dbContext.Database.MigrateAsync();
+    //await dbContext.Database.MigrateAsync();
     await DbInitializer.SeedAsync(dbContext);
 }
 // Configure the HTTP request pipeline.
