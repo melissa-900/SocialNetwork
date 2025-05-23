@@ -11,7 +11,12 @@ builder.Services.AddControllersWithViews();
 //Database Configuration
 var dbConnectionString = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<AppDBContext>(options=> options.UseSqlServer(dbConnectionString));
-var app = builder.Build(); 
+var app = builder.Build();
+
+//Services Configuration
+builder.Services.AddScoped<IPostsService, PostService>();
+builder.Services.AddScoped<IFileService, FileService>();
+
 //Seed the database with initial data
 using (var scope = app.Services.CreateScope())
 {

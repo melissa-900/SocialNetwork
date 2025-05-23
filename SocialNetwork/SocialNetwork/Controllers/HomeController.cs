@@ -12,21 +12,20 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly AppDBContext _context;
+    private readonly IPostsService _postsService;
+    private readonly IFileService _fileService
 
-    public HomeController(ILogger<HomeController> logger, AppDBContext context)
+    public HomeController(ILogger<HomeController> logger, AppDBContext context, IPostsService _postsService)
     {
         _logger = logger;
         _context = context;
+        _postsService = postsService;
     }
 
     public async Task<IActionResult> Index()
     {
-        var allPosts = await _context.Posts
-        .Include(n => n.User)
-        .Include(n => n.Comments)
-        .ThenInclude(n => n.User)
-        .OrderByDescending(n => n.DateCreated)
-        .ToListAsync();
+        int loggedInUserId = 1;
+        var allPosts = await _postsService.GetAllPostsAsync(loggedInUserId);
 
         return View(allPosts);
     }
@@ -37,40 +36,20 @@ public class HomeController : Controller
         // Get the logged in user
         int loggedInUser = 1;
 
+        var imageUploadPath = await _fileService.UploadImageAsync(post.Image, ImageFileType.PostImage);
+
         // Create a new post
         var newPost = new Post
         {
             Content = post.Content,
             DateCreated = DateTime.UtcNow,
             DateUpdated = DateTime.UtcNow,
-            ImageUrl = "",
+            ImageUrl = imageUploadPath,
             NrOfReports = 0,
             UserId = loggedInUser
         };
 
-        // Check and save the image
-        if (post.Image != null && post.Image.Length > 0)
-        {
-            string rootFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-            if (post.Image.ContentType.Contains("image"))
-            {
-                string rootFolderPathImages = Path.Combine(rootFolderPath, "images/uploaded");
-                Directory.CreateDirectory(rootFolderPathImages);
-
-                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(post.Image.FileName);
-                string filePath = Path.Combine(rootFolderPathImages, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                    await post.Image.CopyToAsync(stream);
-
-                // Set the URL to the newPost object
-                newPost.ImageUrl = "/images/uploaded/" + fileName;
-            }
-        }
-
-        // Add the post to the database
-        await _context.Posts.AddAsync(newPost);
-        await _context.SaveChangesAsync();
+        await _postsService.CreatePostAsync(newPost);
 
         // Redirect to the index page
         return RedirectToAction("Index");
@@ -91,22 +70,15 @@ public class HomeController : Controller
             DateUpdated = DateTime.UtcNow
         };
 
-        await _context.Comments.AddAsync(newComment);
-        await _context.SaveChangesAsync();
-        
+        await _postsService.AddPostCommentAsync(newComment);
+
         return RedirectToAction("Index");
     }
 
     [HttpPost]
     public async Task<IActionResult> RemovePostComment(RemoveCommentVM removeCommentVM)
     {
-        var commentDb = await _context.Comments.FirstOrDefaultAsync(c => c.Id == removeCommentVM.CommentId);
-
-        if(commentDb != null)
-        {
-            _context.Comments.Remove(commentDb);
-            await _context.SaveChangesAsync();
-        }
+        await _postsService.RemovePostCommentAsync(removeCommentVM.CommentId);
 
         return RedirectToAction("Index");
 
