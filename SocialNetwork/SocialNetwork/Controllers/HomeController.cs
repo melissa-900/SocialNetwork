@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using SocialNetwork.Data;
 using SocialNetwork.Data.Models;
+using SocialNetwork.Data.Services;
 using SocialNetwork.ViewModels.Home;
 
 namespace SocialNetwork.Controllers;
@@ -12,26 +13,18 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly AppDBContext _context;
-
-    public HomeController(ILogger<HomeController> logger, AppDBContext context)
+    private readonly IPostService _postService;
+    public HomeController(ILogger<HomeController> logger, AppDBContext context, IPostService postService)
     {
         _logger = logger;
         _context = context;
+        _postService = postService;
     }
 
     public async Task<IActionResult> Index()
     {
         int loggeedInUser = 1;
-        var allPosts = await _context.Posts
-        .Where(n=> (!n.IsPrivate || n.UserId==loggeedInUser) && n.Reports.Count<5 && !n.IsDeleted)
-        .Include(n => n.User)
-        .Include(n => n.Comments)
-        .Include(n=> n.Likes)
-        .Include(n => n.Favorites)
-        .ThenInclude(n => n.User)
-        .Include(n => n.Reports)
-        .OrderByDescending(n => n.DateCreated)
-        .ToListAsync();
+        var allPosts = await _postService.GetAllPostAsync(loggeedInUser);
 
         return View(allPosts);
     }
@@ -53,29 +46,7 @@ public class HomeController : Controller
             UserId = loggedInUser
         };
 
-        // Check and save the image
-        if (post.Image != null && post.Image.Length > 0)
-        {
-            string rootFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-            if (post.Image.ContentType.Contains("image"))
-            {
-                string rootFolderPathImages = Path.Combine(rootFolderPath, "images/uploaded");
-                Directory.CreateDirectory(rootFolderPathImages);
-
-                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(post.Image.FileName);
-                string filePath = Path.Combine(rootFolderPathImages, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                    await post.Image.CopyToAsync(stream);
-
-                // Set the URL to the newPost object
-                newPost.ImageUrl = "/images/uploaded/" + fileName;
-            }
-        }
-
-        // Add the post to the database
-        await _context.Posts.AddAsync(newPost);
-        await _context.SaveChangesAsync();
+        await _postService.CreatePostAsync(newPost, post.Image);
 
         // Redirect to the index page
         return RedirectToAction("Index");
@@ -85,23 +56,8 @@ public class HomeController : Controller
     public async Task<IActionResult> TogglePostLike(PostLikeVM postLikeVM) 
     {
         int loggedInUser = 1;
-        // chek if the user has already liked the post
-        var like = await _context.Likes.Where(n => n.UserId == loggedInUser && n.PostId == postLikeVM.PostId).FirstOrDefaultAsync();
-        if (like != null)
-        {
-            _context.Likes.Remove(like);
-            await _context.SaveChangesAsync();
-        }
-        else
-        {
-            var newlike = new Like()
-            {
-                PostId = postLikeVM.PostId,
-                UserId = loggedInUser
-            };
-            await _context.Likes.AddAsync(newlike);
-            await _context.SaveChangesAsync();
-        }
+        await _postService.TogglePostLikeAsync(postLikeVM.PostId, loggedInUser);
+        
         return RedirectToAction("Index");
         
     }
@@ -110,23 +66,8 @@ public class HomeController : Controller
     public async Task<IActionResult> TogglePostFavorite(PostFavoriteVM postFavoriteVM)
     {
         int loggedInUser = 1;
-        // chek if the user has already favorited the post
-        var favorite = await _context.Favorites.Where(n => n.PostId == postFavoriteVM.PostId && n.UserId == loggedInUser).FirstOrDefaultAsync();
-        if (favorite != null)
-        {
-            _context.Favorites.Remove(favorite);
-            await _context.SaveChangesAsync();
-        }
-        else
-        {
-            var newFavorite = new Favorite()
-            {
-                PostId = postFavoriteVM.PostId,
-                UserId = loggedInUser
-            };
-            await _context.Favorites.AddAsync(newFavorite);
-            await _context.SaveChangesAsync();
-        }
+        await _postService.TogglePostFavoriteAsync(postFavoriteVM.PostId, loggedInUser);
+        
         return RedirectToAction("Index");
 
     }
@@ -135,15 +76,7 @@ public class HomeController : Controller
     public async Task<IActionResult> TogglePostVisibility(PostVisibilityVM postVisibilityVM)
     {
         int loggedInUser = 1;
-        // get post bu id and user id
-        var post = await _context.Posts.FirstOrDefaultAsync(n => n.Id == postVisibilityVM.PostId && n.UserId == loggedInUser);
-        if (post != null)
-        {
-            post.IsPrivate = !post.IsPrivate;
-            _context.Posts.Update(post);
-            await _context.SaveChangesAsync();
-        }
-        
+        await _postService.TogglePostVisibility(postVisibilityVM.PostId, loggedInUser);
         return RedirectToAction("Index");
 
     }
@@ -162,10 +95,7 @@ public class HomeController : Controller
             DateCreated = DateTime.UtcNow,
             DateUpdated = DateTime.UtcNow
         };
-
-        await _context.Comments.AddAsync(newComment);
-        await _context.SaveChangesAsync();
-        
+        await _postService.AddPostComentAsync(newComment);
         return RedirectToAction("Index");
     }
 
@@ -174,16 +104,7 @@ public class HomeController : Controller
     {
         int loggedInUser = 1;
 
-        //Creat a post object
-        var newReport = new Report()
-        {
-            UserId = loggedInUser,
-            PostId = postReportVM.PostId,
-            DateCreated = DateTime.UtcNow,
-        };
-
-        await _context.Reports.AddAsync(newReport);
-        await _context.SaveChangesAsync();
+        await _postService.ReportPostAsync(postReportVM.PostId,loggedInUser);
 
         return RedirectToAction("Index");
     }
@@ -191,28 +112,14 @@ public class HomeController : Controller
     [HttpPost]
     public async Task<IActionResult> RemovePostComment(RemoveCommentVM removeCommentVM)
     {
-        var commentDb = await _context.Comments.FirstOrDefaultAsync(c => c.Id == removeCommentVM.CommentId);
-
-        if(commentDb != null)
-        {
-            _context.Comments.Remove(commentDb);
-            await _context.SaveChangesAsync();
-        }
-
+        await _postService.RemovePostCommentAsync(removeCommentVM.CommentId);
         return RedirectToAction("Index");
-
     }
 
     [HttpPost]
     public async Task<IActionResult> PostDelete(PostDeleteVM postDeleteVM)
     {
-        var postDB = await _context.Posts.FirstOrDefaultAsync(p=> p.Id == postDeleteVM.PostId);
-        if (postDB != null)
-        {
-            postDB.IsDeleted = true;
-            _context.Posts.Update(postDB);
-            await _context.SaveChangesAsync();
-        }
+        await _postService.RemovePostAsync(postDeleteVM.PostId);
         return  RedirectToAction("Index");
     }
 
