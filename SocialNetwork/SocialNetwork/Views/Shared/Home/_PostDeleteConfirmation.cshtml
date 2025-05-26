@@ -1,0 +1,13 @@
+﻿<div id="postDeleteDialog" uk-modal> 
+    <div class="uk-modal-dialog uk-modal-body">
+        <h2 class="uk-text-center">Delete Post</h2>
+        <p class="uk-text-center">Are you sure you want to delete this post?</p>
+        <div class="uk-text-center">
+            <form asp-controller="HomeController" asp-action="PostDelete">
+                <input type="hidden" name="postId" id="deletePostId" value="" />
+                <button type="submit" class="uk-button uk-button-danger" id="confirmDeletePost">Delete</button>
+            <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+            </form>
+        </div>
+        
+</div>

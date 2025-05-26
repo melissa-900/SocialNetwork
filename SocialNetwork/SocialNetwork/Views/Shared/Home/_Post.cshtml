@@ -33,20 +33,28 @@
 						<ion-icon name="ellipsis-horizontal"></ion-icon>
 					</button>
 					<ul class="dropdown-menu dropdown-menu-end">
-						<li><a class="dropdown-item text-danger" href="#">Delete post</a></li>
-
+						@if (Model.UserId == 1)
+						{
+						<li>
+								<form asp-controller="Home" asp-action="PostDelete">
+									<input  type="hidden" name="postId" id="deletePostId" value="@Model.Id" />
+									<button type="submit">Delete</button>
+									<button type="button">Cancel</button>
+								</form>
+							
+						</li>
 						<li> 
-							@if(Model.UserId == 1)
-							{
 							<form asp-controller="Home" asp-action="TogglePostVisibility">
 								<input type="hidden" name="postId" value="@Model.Id" />
 								<button type="submit">
                                     Set as @(isPrivate ? "public" : "private")
                                 </button>
 							</form>
-						}
+						
 						</li>
+						}
 
+						
 						<li>
 							@if (!isReported)
 							{
@@ -186,3 +194,11 @@
 		</div>
 	</div>
 </div>
+@* <partial name="Home/_PostDeleteConfirmation"/>  *@
+@* <script>  *@
+@*     function showDeletePostDialog(postId) {         *@
+@* 		console.log("Post ID: " + postId); *@
+@* 		document.getElementById("deletePostId").value = postId; *@
+@* 		UIkit.modal(document.getElementById('postDeleteDialog')).show();  *@
+@*     } *@
+@*  </script> *@
