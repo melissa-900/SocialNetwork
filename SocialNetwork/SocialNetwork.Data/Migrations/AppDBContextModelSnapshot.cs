@@ -8,7 +8,7 @@ using SocialNetwork.Data;
 
 #nullable disable
 
-namespace SocialNetwork.Migrations
+namespace SocialNetwork.Data.Migrations
 {
     [DbContext(typeof(AppDBContext))]
     partial class AppDBContextModelSnapshot : ModelSnapshot

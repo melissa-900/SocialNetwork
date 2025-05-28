@@ -9,11 +9,11 @@ using SocialNetwork.Data;
 
 #nullable disable
 
-namespace SocialNetwork.Migrations
+namespace SocialNetwork.Data.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20250416190437_Added_Post_IsPrivateFlag")]
-    partial class Added_Post_IsPrivateFlag
+    [Migration("20250528192000_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -118,6 +118,9 @@ namespace SocialNetwork.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsPrivate")
                         .HasColumnType("bit");
 
@@ -134,6 +137,27 @@ namespace SocialNetwork.Migrations
                     b.ToTable("Posts");
                 });
 
+            modelBuilder.Entity("SocialNetwork.Data.Models.Report", b =>
+                {
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.HasKey("PostId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Reports");
+                });
+
             modelBuilder.Entity("SocialNetwork.Data.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -145,6 +169,9 @@ namespace SocialNetwork.Migrations
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ProfilePictureUrl")
                         .HasColumnType("nvarchar(max)");
@@ -226,6 +253,25 @@ namespace SocialNetwork.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("SocialNetwork.Data.Models.Report", b =>
+                {
+                    b.HasOne("SocialNetwork.Data.Models.Post", "Post")
+                        .WithMany("Reports")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("SocialNetwork.Data.Models.User", "User")
+                        .WithMany("Reports")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("SocialNetwork.Data.Models.Post", b =>
                 {
                     b.Navigation("Comments");
@@ -233,6 +279,8 @@ namespace SocialNetwork.Migrations
                     b.Navigation("Favorites");
 
                     b.Navigation("Likes");
+
+                    b.Navigation("Reports");
                 });
 
             modelBuilder.Entity("SocialNetwork.Data.Models.User", b =>
@@ -244,6 +292,8 @@ namespace SocialNetwork.Migrations
                     b.Navigation("Likes");
 
                     b.Navigation("Posts");
+
+                    b.Navigation("Reports");
                 });
 #pragma warning restore 612, 618
         }
