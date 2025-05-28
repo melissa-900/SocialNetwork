@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-
+using SocialNetwork.Data.Services;
 namespace SocialNetwork.Tests
 {
     public class HomeControllerTests
@@ -16,7 +16,7 @@ namespace SocialNetwork.Tests
         private readonly HomeController _controller;
         private readonly Mock<ILogger<HomeController>> _mockLogger;
         private readonly AppDBContext _context;
-
+        private readonly IPostService _postService;
         public HomeControllerTests()
         {
             // Create In-Memory DB for tests
@@ -29,8 +29,11 @@ namespace SocialNetwork.Tests
             // Mock Logger
             _mockLogger = new Mock<ILogger<HomeController>>();
 
+
+            //Create Post Service
+            _postService = new PostService(_context);
             // Create controller with InMemory context
-            _controller = new HomeController(_mockLogger.Object, _context);
+            _controller = new HomeController(_mockLogger.Object, _context,_postService);
 
             // Clean the database before each test
             _context.Database.EnsureDeleted();
