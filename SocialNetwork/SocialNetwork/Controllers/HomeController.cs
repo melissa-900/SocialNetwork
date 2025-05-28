@@ -53,22 +53,27 @@ public class HomeController : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> TogglePostLike(PostLikeVM postLikeVM) 
     {
         int loggedInUser = 1;
         await _postService.TogglePostLikeAsync(postLikeVM.PostId, loggedInUser);
-        
-        return RedirectToAction("Index");
+        var post = await _postService.GetPostByIdAsync(postLikeVM.PostId);
+
+        return PartialView("Home/_Post",post);
         
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> TogglePostFavorite(PostFavoriteVM postFavoriteVM)
     {
         int loggedInUser = 1;
         await _postService.TogglePostFavoriteAsync(postFavoriteVM.PostId, loggedInUser);
-        
-        return RedirectToAction("Index");
+
+        var post = await _postService.GetPostByIdAsync(postFavoriteVM.PostId);
+
+        return PartialView("Home/_Post", post);
 
     }
 
@@ -82,6 +87,7 @@ public class HomeController : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddPostComment(PostCommentVM postCommentVM)
     {
         int loggedInUser = 1;
@@ -96,7 +102,9 @@ public class HomeController : Controller
             DateUpdated = DateTime.UtcNow
         };
         await _postService.AddPostComentAsync(newComment);
-        return RedirectToAction("Index");
+
+        var post = await _postService.GetPostByIdAsync(postCommentVM.PostId);
+        return PartialView("Home/_Post", post);
     }
 
     [HttpPost]
@@ -110,10 +118,13 @@ public class HomeController : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemovePostComment(RemoveCommentVM removeCommentVM)
     {
         await _postService.RemovePostCommentAsync(removeCommentVM.CommentId);
-        return RedirectToAction("Index");
+        var post = await _postService.GetPostByIdAsync(removeCommentVM.PostId);
+
+        return PartialView("Home/_Post", post);
     }
 
     [HttpPost]

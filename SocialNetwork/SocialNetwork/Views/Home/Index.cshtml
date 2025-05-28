@@ -19,7 +19,7 @@
 						<partial name="Sidebar/_TrendsForYou"></partial>
 				</div>
 			</div>
-
+			<div id="posts-container"> 
 			@if (Model.Count == 0)
 			{
 				<div class="col-md-8 text-muted text-center">There is no posts.</div>
@@ -35,9 +35,79 @@
 					}
 				</div>
 			}
-
+			</div>
 
 		</div>
 	</div>
 </div>
+<script>
+     document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('posts-container').addEventListener('click', function () {
+
+            const button = event.target.closest('.like-button, .favorite-button')
+            if (button) {
+                event.preventDefault();
+
+                var form = button.closest('form');
+                var postId = form.querySelector('input[name="postId"]').value;
+                var postContainer = document.getElementById('post-' + postId);
+
+                fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: {}
+                })
+                    .then(response => response.text())
+                    .then(html => {
+                        postContainer.innerHTML = html;
+                    })
+                    .catch(error => console.error('Error: ', error));
+            }
+        });
+
+        document.getElementById('posts-container').addEventListener('submit', function () {
+            var form = event.target;
+
+            if (form.classList.contains('add-comment-form')) {
+                event.preventDefault();
+
+                var postId = form.querySelector('input[name="postId"]').value;
+                var postContainer = document.getElementById('post-' + postId);
+
+                fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: {}
+                })
+                    .then(response => response.text())
+                    .then(html => {
+                        postContainer.innerHTML = html;
+                    })
+                    .catch(error => console.error('Error: ', error));
+            }
+
+            if (form.classList.contains('remove-comment-form')) {
+                event.preventDefault();
+
+                var postId = form.querySelector('input[name="postId"]').value;
+                var commentId = form.querySelector('input[name="commentId"]').value;
+
+                var postContainer = document.getElementById('post-' + postId);
+
+                fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: {}
+                })
+                    .then(response => response.text())
+                    .then(html => {
+                        postContainer.innerHTML = html;
+                    })
+                    .catch(error => console.error('Error: ', error));
+
+            }
+        })
+    })
+
+</script>
 

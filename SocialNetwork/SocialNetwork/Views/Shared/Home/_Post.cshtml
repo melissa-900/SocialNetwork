@@ -16,7 +16,7 @@
 	bool isLiked = Model.Likes.Any(n => n.UserId == 1);
 }
 
-<div class="card mb-3">
+<div id="post-@Model.Id" class="card mb-3">
 	<div class="card-body">
 		<!-- post header -->
 		<div>
@@ -92,7 +92,8 @@
 				<div class="d-flex">
 					<form asp-controller="Home" asp-action="TogglePostLike">
 						<input type="hidden" name="postId" value="@Model.Id" />
-						<button type="submit" class="btn btn-light">
+						@Html.AntiForgeryToken()
+						<button type="submit" class="btn btn-light like-button">
 							<ion-icon style="font-size: 18px;" name="@(isLiked ? "thumbs-up" : "thumbs-up-outline")"> </ion-icon>  <!-- ion-icon name="thumbs-up-sharp" style="font-size: 20px; color: @@(Model.Likes.Any(n => n.UserId == 1) ? "#1E90FF" : "#D3D3D3");" -->
 						</button>
 					</form>
@@ -115,7 +116,8 @@
 				<div class="me-2">
 					<form asp-controller="Home" asp-action="TogglePostFavorite">
 						<input type="hidden" name="postId" value="@Model.Id" />
-						<button type="submit" class="btn btn-light">
+						@Html.AntiForgeryToken()
+						<button type="submit" class="btn btn-light favorite-button">
 							<ion-icon name="@(isFavorited?"bookmark":"bookmark-outline")"> </ion-icon>
 						</button>
 						@if (Model.Favorites.Count != 0)
@@ -159,8 +161,10 @@
 							</div>
 							<div class="d-flex justify-content-between mt-1">
 								<p class="mb-1">@comment.Content</p>
-								<form asp-controller="Home" asp-action="RemovePostComment" class="ms-2">
+								<form asp-controller="Home" asp-action="RemovePostComment" class="remove-comment-form">
+                                    @Html.AntiForgeryToken()
 									<input type="hidden" name="commentId" value="@comment.Id" />
+									<input type="hidden" name="postId" value="@comment.PostId" />
 									<button type="submit" class="btn btn-link text-danger btn-sm p-0" title="Remove comment">
 										<ion-icon name="trash-outline"></ion-icon>
 									</button>
@@ -178,7 +182,8 @@
 				}
 			</div>
 
-			<form asp-controller="Home" asp-action="AddPostComment">
+			<form asp-controller="Home" asp-action="AddPostComment" class="add-comment-form">
+				@Html.AntiForgeryToken()
 				<div class="d-flex align-items-start border-top border-light px-3 py-3">
 					<img src="~/images/user.png" class="rounded-circle me-2" style="width: 32px; height: 32px;" />
 
