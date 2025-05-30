@@ -12,7 +12,7 @@ namespace SocialNetwork.Data.Services
     {
         Task<List<Post>> GetAllPostAsync(int userId);
         Task<Post> GetPostByIdAsync(int postId);
-        Task<Post> CreatePostAsync(Post post, IFormFile image);
+        Task<Post> CreatePostAsync(Post post);
         Task RemovePostAsync(int postId);
         Task AddPostComentAsync(Comment comment);
         Task RemovePostCommentAsync(int commentId);

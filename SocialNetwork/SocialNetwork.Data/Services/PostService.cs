@@ -22,27 +22,9 @@ namespace SocialNetwork.Data.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Post> CreatePostAsync(Post post, IFormFile Image)
+        public async Task<Post> CreatePostAsync(Post post)
         {
-            // Check and save the image
-            if (Image != null && Image.Length > 0)
-            {
-                string rootFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-                if (Image.ContentType.Contains("image"))
-                {
-                    string rootFolderPathImages = Path.Combine(rootFolderPath, "images/uploaded");
-                    Directory.CreateDirectory(rootFolderPathImages);
-
-                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(Image.FileName);
-                    string filePath = Path.Combine(rootFolderPathImages, fileName);
-
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                        await Image.CopyToAsync(stream);
-
-                    // Set the URL to the newPost object
-                    post.ImageUrl = "/images/uploaded/" + fileName;
-                }
-            }
+            
             await _context.Posts.AddAsync(post);
             await _context.SaveChangesAsync();
             return post;

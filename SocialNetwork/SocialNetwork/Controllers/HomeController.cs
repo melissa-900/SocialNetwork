@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using SocialNetwork.Data;
+using SocialNetwork.Data.Helpers.Enums;
 using SocialNetwork.Data.Models;
 using SocialNetwork.Data.Services;
 using SocialNetwork.ViewModels.Home;
@@ -14,11 +15,13 @@ public class HomeController : Controller
     private readonly ILogger<HomeController> _logger;
     private readonly AppDBContext _context;
     private readonly IPostService _postService;
-    public HomeController(ILogger<HomeController> logger, AppDBContext context, IPostService postService)
+    private readonly IFilesService _fileService;
+    public HomeController(ILogger<HomeController> logger, AppDBContext context, IPostService postService, IFilesService fileService)
     {
         _logger = logger;
         _context = context;
         _postService = postService;
+        _fileService = fileService;
     }
 
     public async Task<IActionResult> Index()
@@ -35,18 +38,19 @@ public class HomeController : Controller
         // Get the logged in user
         int loggedInUser = 1;
 
+        var imageUploadPath = await _fileService.UploadImageAsync(post.Image, ImageFileType.PostImage);
         // Create a new post
         var newPost = new Post
         {
             Content = post.Content,
             DateCreated = DateTime.UtcNow,
             DateUpdated = DateTime.UtcNow,
-            ImageUrl = "",
+            ImageUrl = imageUploadPath,
             NrOfReports = 0,
             UserId = loggedInUser
         };
 
-        await _postService.CreatePostAsync(newPost, post.Image);
+        await _postService.CreatePostAsync(newPost);
 
         // Redirect to the index page
         return RedirectToAction("Index");

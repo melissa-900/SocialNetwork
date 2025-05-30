@@ -12,8 +12,10 @@ builder.Services.AddControllersWithViews();
 //Database Configuration
 var dbConnectionString = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<AppDBContext>(options=> options.UseSqlServer(dbConnectionString));
+var blobConnectionString = builder.Configuration["AzzureConnectionString"];
 //Services configuration 
 builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.AddScoped<IFilesService>(s=>new FileService(blobConnectionString));
 var app = builder.Build(); 
 //Seed the database with initial data
 using (var scope = app.Services.CreateScope())

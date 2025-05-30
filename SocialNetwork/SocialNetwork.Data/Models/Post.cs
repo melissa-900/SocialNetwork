@@ -7,7 +7,7 @@ namespace SocialNetwork.Data.Models
         [Key]
         public int Id { get; set; }
 
-        public string Content { get; set; }
+        public string? Content { get; set; }
 
         public string? ImageUrl { get; set; }
 
