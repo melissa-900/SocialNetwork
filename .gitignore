@@ -398,3 +398,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/SocialNetwork/SocialNetwork/appsettings.json
+/SocialNetwork/SocialNetwork/appsettings.json
+/SocialNetwork/SocialNetwork/appsettings.json
