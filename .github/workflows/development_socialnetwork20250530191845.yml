@@ -3,7 +3,7 @@ name: Build and Deploy to Azure
 on:
   push:
     branches:
-      - main  # змінити, якщо в тебе інша основна гілка
+      - main
 
 jobs:
   build-and-deploy:
